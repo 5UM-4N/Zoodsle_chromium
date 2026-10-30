@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZoodSle — Accessibility</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container" id="app">
+    <!-- Header -->
+    <header class="popup-header">
+      <div class="brand">
+        <div class="logo-mark" aria-hidden="true">
+          <div class="eye-pupil"></div>
+        </div>
+        <div>
+          <h1 class="brand-title">ZoodSle</h1>
+          <p class="brand-tagline">The web, understood aloud.</p>
+        </div>
+      </div>
+      <div class="master-toggle-wrap">
+        <label class="switch" for="masterToggle">
+          <input type="checkbox" id="masterToggle" checked>
+          <span class="slider" aria-hidden="true"></span>
+          <span class="zoodsle-sr-only">Toggle ZoodSle Active</span>
+        </label>
+      </div>
+    </header>
+
+    <!-- Backend Connection Banner -->
+    <section class="status-banner" id="statusBanner" role="status" aria-live="polite">
+      <div class="status-indicator">
+        <span class="status-dot checking" id="statusDot" aria-hidden="true"></span>
+        <span class="status-text" id="statusText">Checking local AI backend...</span>
+      </div>
+      <button class="icon-btn" id="refreshHealthBtn" title="Check connection again" aria-label="Refresh backend status">
+        ↻
+      </button>
+    </section>
+
+    <!-- Troubleshooting alert (hidden when connected) -->
+    <div class="troubleshoot-alert" id="troubleshootAlert" style="display: none;" role="alert">
+      <p id="troubleshootMsg">Local AI is offline.</p>
+      <div class="troubleshoot-guide">
+        <span>Required local services:</span>
+        <ul>
+          <li>FastAPI: <code>http://127.0.0.1:8000</code></li>
+          <li>LM Studio: <code>http://127.0.0.1:1234/v1</code> (Model: <code>qwen/qwen3-vl-4b</code>)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Speech & Action Controls -->
+    <section class="section" aria-labelledby="heading-playback">
+      <h2 class="section-title" id="heading-playback">Narration Controls</h2>
+      <div class="button-grid">
+        <button class="btn btn-primary" id="describeNowBtn">
+          <span aria-hidden="true">👁️</span> Describe Focused
+        </button>
+        <button class="btn btn-secondary" id="repeatBtn">
+          <span aria-hidden="true">🔄</span> Repeat
+        </button>
+        <button class="btn btn-secondary" id="pauseResumeBtn">
+          <span aria-hidden="true">⏸</span> Pause
+        </button>
+        <button class="btn btn-danger" id="stopBtn">
+          <span aria-hidden="true">⏹</span> Stop
+        </button>
+      </div>
+    </section>
+
+    <!-- Mode & Auto Narration -->
+    <section class="section" aria-labelledby="heading-modes">
+      <h2 class="section-title" id="heading-modes">Interaction Mode</h2>
+      <div class="segmented-control" role="radiogroup" aria-labelledby="heading-modes">
+        <label class="segment-option">
+          <input type="radio" name="zoodsleMode" value="ondemand" id="modeOndemand" checked>
+          <span>On-demand</span>
+        </label>
+        <label class="segment-option">
+          <input type="radio" name="zoodsleMode" value="auto" id="modeAuto">
+          <span>Automatic</span>
+        </label>
+        <label class="segment-option">
+          <input type="radio" name="zoodsleMode" value="both" id="modeBoth">
+          <span>Both</span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div>
+          <label for="autoToggle" class="toggle-label">Automatic Scroll Narration</label>
+          <span class="toggle-desc">Speaks photos into audio as you scroll down any webpage.</span>
+        </div>
+        <label class="switch" for="autoToggle">
+          <input type="checkbox" id="autoToggle">
+          <span class="slider" aria-hidden="true"></span>
+          <span class="zoodsle-sr-only">Toggle Automatic Scroll Narration</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- Voice & Verbosity Settings -->
+    <section class="section" aria-labelledby="heading-preferences">
+      <h2 class="section-title" id="heading-preferences">Voice & Detail</h2>
+      
+      <div class="field-row">
+        <label for="verbositySelect" class="field-label">Description Length</label>
+        <select id="verbositySelect" class="select-input">
+          <option value="concise">Concise (Fast screen-reading)</option>
+          <option value="detailed">Detailed (Thorough scene description)</option>
+        </select>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label-group">
+          <label for="speedSlider" class="field-label">Speech Speed</label>
+          <span id="speedValue" class="field-value">1.0x</span>
+        </div>
+        <input type="range" id="speedSlider" min="0.75" max="2.0" step="0.25" value="1.0" class="range-slider">
+      </div>
+    </section>
+
+    <!-- Recent Description & Follow-up Chat -->
+    <section class="section" aria-labelledby="heading-recent">
+      <h2 class="section-title" id="heading-recent">Active Photo Description</h2>
+      <div class="description-box" id="latestDescriptionBox">
+        <p class="description-empty" id="descEmptyText">No photo described yet. Press Alt+Shift+D on any webpage or select "Describe Focused".</p>
+        <div id="descContent" style="display: none;">
+          <p class="description-text" id="latestDescriptionText"></p>
+          <div class="description-meta">
+            <span id="descModelBadge" class="meta-badge">Local AI</span>
+            <span id="descTime" class="meta-time"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Follow-up Question -->
+      <form id="chatForm" class="chat-form" style="display: none;">
+        <label for="chatInput" class="zoodsle-sr-only">Ask a question about this photo</label>
+        <div class="chat-input-wrap">
+          <input type="text" id="chatInput" placeholder="Ask a question about this photo..." class="text-input" maxlength="200" required>
+          <button type="submit" id="chatSubmitBtn" class="btn btn-primary btn-sm">Ask</button>
+        </div>
+        <div id="chatAnswer" class="chat-answer" style="display: none;" role="status"></div>
+      </form>
+    </section>
+
+    <!-- Privacy Notice & Footer -->
+    <footer class="popup-footer">
+      <div class="privacy-badge">
+        <span aria-hidden="true">🔒</span>
+        <span>Local inference only. No images leave your computer.</span>
+      </div>
+      <div class="footer-links">
+        <a href="options.html" target="_blank" class="footer-link">Options & Shortcuts</a>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

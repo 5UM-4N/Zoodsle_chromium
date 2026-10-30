@@ -1,0 +1,29 @@
+{
+  "name": "zoodsle-extension",
+  "version": "1.0.0",
+  "description": "ZoodSle: The web, understood aloud. Universal local-first AI accessibility extension for Chrome.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "watch": "node build.js --watch"
+  },
+  "keywords": [
+    "accessibility",
+    "chrome-extension",
+    "ai",
+    "local-first",
+    "screen-reader",
+    "universal-web"
+  ],
+  "author": "ZoodSle Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chrome": "^0.0.308",
+    "esbuild": "^0.25.0",
+    "jsdom": "^26.0.0",
+    "typescript": "~5.7.2",
+    "vitest": "^3.0.5"
+  }
+}

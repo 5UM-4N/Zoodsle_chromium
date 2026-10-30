@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZoodSle Settings & Accessibility</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="options-container">
+    <header class="options-header">
+      <div class="brand">
+        <div class="logo-mark" aria-hidden="true">
+          <div class="eye-pupil"></div>
+        </div>
+        <div>
+          <h1 class="brand-title">ZoodSle Settings</h1>
+          <p class="brand-tagline">The web, understood aloud. Local-first AI accessibility.</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="options-main">
+      <!-- Backend Configuration -->
+      <section class="card" aria-labelledby="heading-backend">
+        <h2 id="heading-backend" class="card-title">Local Infrastructure</h2>
+        <p class="card-desc">ZoodSle connects strictly to your local on-device AI (LM Studio or ZoodSle server).</p>
+        
+        <div class="form-group">
+          <label for="backendUrlInput" class="label">Local AI Endpoint URL</label>
+          <input type="url" id="backendUrlInput" class="text-input" value="http://127.0.0.1:1234/v1" placeholder="http://127.0.0.1:1234/v1" required>
+          <span class="help-text">Default: <code>http://127.0.0.1:1234/v1</code> (Direct LM Studio). Also supports <code>http://127.0.0.1:8000</code> (ZoodSle Server).</span>
+        </div>
+
+        <div class="action-row">
+          <button type="button" id="testConnectionBtn" class="btn btn-secondary">Test Connection</button>
+          <span id="testConnectionResult" class="test-result" role="status"></span>
+        </div>
+      </section>
+
+      <!-- Universal Web Image Filtering -->
+      <section class="card" aria-labelledby="heading-detection">
+        <h2 id="heading-detection" class="card-title">Universal Web Image Filtering</h2>
+        <p class="card-desc">Configure conservative heuristics to avoid describing avatars, tiny icons, or decorative elements across websites.</p>
+
+        <div class="form-group">
+          <label for="minDimensionInput" class="label">Minimum Image Dimension (pixels)</label>
+          <input type="number" id="minDimensionInput" class="text-input" min="100" max="800" step="10" value="180">
+          <span class="help-text">Images with width or height under this threshold are ignored (default: 180px).</span>
+        </div>
+      </section>
+
+      <!-- Speech Narration -->
+      <section class="card" aria-labelledby="heading-speech">
+        <h2 id="heading-speech" class="card-title">Speech Synthesis</h2>
+        <p class="card-desc">Adjust default narration volume and rate for screen-reading.</p>
+
+        <div class="form-group">
+          <label for="speechVolumeInput" class="label">Speech Volume</label>
+          <input type="range" id="speechVolumeInput" class="range-slider" min="0.1" max="1.0" step="0.1" value="1.0">
+          <div class="slider-labels">
+            <span>10%</span>
+            <span id="volumeValue">100%</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Keyboard Shortcuts -->
+      <section class="card" aria-labelledby="heading-shortcuts">
+        <h2 id="heading-shortcuts" class="card-title">Keyboard Shortcuts</h2>
+        <p class="card-desc">
+          ZoodSle supports fast, accessible keyboard navigation on any webpage.
+          You can also rebind or customize these shortcuts directly in Chrome at <code>chrome://extensions/shortcuts</code>.
+        </p>
+
+        <table class="shortcuts-table">
+          <thead>
+            <tr>
+              <th scope="col">Action</th>
+              <th scope="col">macOS Shortcut</th>
+              <th scope="col">Windows / Linux</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Describe focused or active photo</td>
+              <td><kbd>⌥</kbd> + <kbd>⇧</kbd> + <kbd>D</kbd> (Option+Shift+D)</td>
+              <td><kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd></td>
+            </tr>
+            <tr>
+              <td>Stop speech narration immediately</td>
+              <td><kbd>⌥</kbd> + <kbd>⇧</kbd> + <kbd>S</kbd> (Option+Shift+S)</td>
+              <td><kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd></td>
+            </tr>
+            <tr>
+              <td>Activate in-page description button</td>
+              <td><kbd>Tab</kbd> to focus, <kbd>Return</kbd> or <kbd>Space</kbd></td>
+              <td><kbd>Tab</kbd> to focus, <kbd>Enter</kbd> or <kbd>Space</kbd></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Privacy & Architecture -->
+      <section class="card" aria-labelledby="heading-privacy">
+        <h2 id="heading-privacy" class="card-title">Privacy & Local Processing</h2>
+        <div class="privacy-content">
+          <p>
+            <strong>100% Local Inference:</strong> Every image analyzed by ZoodSle is processed by your local machine using
+            <code>qwen/qwen3-vl-4b</code> in LM Studio. No photos, descriptions, or conversation logs are sent to cloud services,
+            external AI providers, or remote analytics.
+          </p>
+          <p>
+            <strong>Permissions:</strong> ZoodSle requires access to <code>http://127.0.0.1:8000/*</code> to communicate with the local
+            vision backend, and standard web host permissions to inspect images on any webpage and display audio descriptions.
+          </p>
+        </div>
+      </section>
+
+      <!-- Storage & Cache Management -->
+      <section class="card" aria-labelledby="heading-maintenance">
+        <h2 id="heading-maintenance" class="card-title">Cache & Storage</h2>
+        <p class="card-desc">Clear stored preferences or cached image descriptions.</p>
+        <div class="action-row">
+          <button type="button" id="clearCacheBtn" class="btn btn-danger">Reset All Settings to Defaults</button>
+          <span id="clearCacheResult" class="test-result" role="status"></span>
+        </div>
+      </section>
+    </main>
+
+    <footer class="options-footer">
+      <div class="save-bar">
+        <span id="saveStatus" class="save-status" role="status">All changes saved automatically.</span>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>
